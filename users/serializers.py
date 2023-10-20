@@ -2,10 +2,13 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
+from django.db import models
 
 from rest_framework import viewsets, permissions, status, generics, serializers
+from rest_framework.fields import empty
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from knox.views import LoginView as KnoxLoginView
 from knox.auth import TokenAuthentication
@@ -45,7 +48,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserRelationshipSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserRelationship
-        fields = '__all__'
+        fields = "__all__"
 
 
 
@@ -56,9 +59,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ("username", "phone_number", "email", "first_name", "last_name", "password")
         extra_kwargs = {
-            'password': {
-                'write_only': True,
-              'style': {'input_type': 'password'}
+            "password": {
+                "write_only": True,
+              "style": {"input_type": "password"}
             }
         }
     
@@ -74,14 +77,48 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create_user(
-            username=validated_data['username'],
-            phone_number=validated_data['phone_number'],
-            password=validated_data['password'],
+            username=validated_data["username"],
+            phone_number=validated_data["phone_number"],
+            password=validated_data["password"],
             email=validated_data["email"],
             first_name=validated_data["first_name"],
             last_name=validated_data["last_name"],
         )
         return user
+
+
+class UserLoginSerializer(AuthTokenSerializer):
+    login_field = serializers.CharField(required=False, )
+    password = serializers.CharField()
+
+    class Meta:
+        model = User
+        fields = ("username", "password")
+
+    def validate(self, attrs):
+        login_field = attrs.get("login_field")
+        password = attrs.get("password")
+        user = User.objects.filter(
+            models.Q(phone_number=login_field) | 
+            models.Q(username=login_field) |
+            models.Q(email=login_field)
+        ).first()
+        if user:
+            if not user.check_password(password):
+                message = "Incorrect Password..."
+                raise serializers.ValidationError(message, code="authorization")
+        else:
+            message = "Unable to authenticate with provided credentials."
+            raise serializers.ValidationError(message, code="authorization")
+        token, _ = AuthToken.objects.create(user=user)
+        attrs["user"] = user
+        attrs["token"] = token
+        return attrs
+    
+    '''def __init__(self, *args, **kwargs):
+        super(UserLoginSerializer, self).__init__(*args, **kwargs)
+        self.fields.pop("username")'''
+
 
 
 
