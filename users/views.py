@@ -2,16 +2,32 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login
 from django.shortcuts import get_object_or_404
+from django.db import models
 
-from rest_framework import viewsets, permissions, generics, views, response, status
+from rest_framework import viewsets, permissions, generics, views, response, status, serializers
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from knox.views import LoginView as KnoxLoginView
+from knox.models import AuthToken
 
 from users.serializers import UserSerializer, UserRegistrationSerializer, UserLoginSerializer, ProfileSerializer, UserRelationshipSerializer, UserRelationship
 
 
 User = get_user_model()
+
+
+from django.shortcuts import render
+from django.http import HttpResponse
+from rest_framework.views import APIView
+
+
+def get_user_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -35,12 +51,52 @@ class UserLoginView(KnoxLoginView):
     serializer_class = UserLoginSerializer
     permission_classes = [permissions.AllowAny]
 
+    def validate(self, attrs):
+        username = attrs.get("username")
+        password = attrs.get("password")
+        user = User.objects.filter(
+            models.Q(username=username)
+        ).first()
+        if user:
+            if not user.check_password(password):
+                message = "Incorrect Password..."
+                raise serializers.ValidationError(message, code="authorization")
+        else:
+            message = "Unable to authenticate with provided credentials."
+            raise serializers.ValidationError(message, code="authorization")
+        token, _ = AuthToken.objects.create(user=user)
+        attrs["user"] = user
+        attrs["token"] = token
+        response_data = {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "phone_number": user.phone_number,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "email": user.email,
+            },
+            "token": token.key
+        }
+        return response_data
+
     def post(self, request, format=None):
         serializer = AuthTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
         login(request, user)
-        return super(UserLoginView, self).post(request, format)
+        token, _ = AuthToken.objects.create(user=user)
+        response_data = {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "phone_number": user.phone_number,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "email": user.email,
+            },
+        }
+        return response.Response(response_data)
 
 
 
@@ -116,6 +172,7 @@ class UserRelationshipDeleteView(generics.DestroyAPIView):
 
         self.perform_destroy(relationship)
         return response.Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 

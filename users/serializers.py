@@ -51,7 +51,6 @@ class UserRelationshipSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
@@ -88,38 +87,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(AuthTokenSerializer):
-    login_field = serializers.CharField(required=False, )
     password = serializers.CharField()
 
     class Meta:
         model = User
         fields = ("username", "password")
-
-    def validate(self, attrs):
-        login_field = attrs.get("login_field")
-        password = attrs.get("password")
-        user = User.objects.filter(
-            models.Q(phone_number=login_field) | 
-            models.Q(username=login_field) |
-            models.Q(email=login_field)
-        ).first()
-        if user:
-            if not user.check_password(password):
-                message = "Incorrect Password..."
-                raise serializers.ValidationError(message, code="authorization")
-        else:
-            message = "Unable to authenticate with provided credentials."
-            raise serializers.ValidationError(message, code="authorization")
-        token, _ = AuthToken.objects.create(user=user)
-        attrs["user"] = user
-        attrs["token"] = token
-        return attrs
     
-    '''def __init__(self, *args, **kwargs):
-        super(UserLoginSerializer, self).__init__(*args, **kwargs)
-        self.fields.pop("username")'''
-
-
 
 class UserRelationshipSerializer(serializers.ModelSerializer):
     follower = UserSerializer(read_only=True)
