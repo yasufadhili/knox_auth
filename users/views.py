@@ -16,6 +16,7 @@ User = get_user_model()
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    #permission_classes = [permissions.IsAdminUser]
 
 
 class UserRegistrationView(generics.CreateAPIView):
