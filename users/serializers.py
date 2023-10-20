@@ -1,5 +1,8 @@
 from django.contrib.auth import get_user_model
+
 from rest_framework import serializers
+
+from django_countries.serializers import CountryFieldMixin
 
 from users.models import Profile, ProfileStatus, UserRelationship
 
@@ -10,11 +13,13 @@ User = get_user_model()
 class ProfileStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileStatus
-        fields = '__all__'
+        fields = ["status",]
 
 
-class ProfileSerializer(serializers.ModelSerializer):
-    profile_status = ProfileStatusSerializer(read_only=False)
+class ProfileSerializer(CountryFieldMixin, serializers.ModelSerializer):
+    followers_count = serializers.IntegerField(read_only=True)
+    following_count = serializers.IntegerField(read_only=True)
+    status = ProfileStatusSerializer(read_only=False)
     class Meta:
         model = Profile
         fields = '__all__'
