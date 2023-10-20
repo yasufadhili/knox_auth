@@ -1,5 +1,7 @@
 # Project Documentation: Knox Auth
 
+Project To handle users in a Django API
+
 ## Overview - The users App
 
 The "Users" app is a Django application designed for user management and user-related features. It includes functionalities such as user registration, user profiles, user relationships (followers and following), and user authentication using [Django Rest Knox](https://jazzband.github.io/django-rest-knox/). This documentation provides a detailed guide on how to use the "Users" app and its API endpoints.
