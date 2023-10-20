@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate, login
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -87,11 +87,31 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(AuthTokenSerializer):
+    username = serializers.CharField()
     password = serializers.CharField()
 
     class Meta:
         model = User
-        fields = ("username", "password")
+        fields = ("id", "username", "phone_number", "password")
+    
+    def validate(self, attrs):
+        username = attrs.get("username").lower()
+        password = attrs.get("password")
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if user:
+                if not user.is_active:
+                    msg = "User account is disabled."
+                    raise serializers.ValidationError(msg)
+            else:
+                msg = "Unable to log in with provided credentials."
+                raise serializers.ValidationError(msg)
+        else:
+            msg = "Must include 'username' and 'password'."
+            raise serializers.ValidationError(msg)
+        attrs["user"] = user
+        return attrs
+    
     
 
 class UserRelationshipSerializer(serializers.ModelSerializer):

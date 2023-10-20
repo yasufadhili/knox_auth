@@ -9,6 +9,7 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from knox.views import LoginView as KnoxLoginView
 from knox.models import AuthToken
+from knox.auth import TokenAuthentication
 
 from users.serializers import UserSerializer, UserRegistrationSerializer, UserLoginSerializer, ProfileSerializer, UserRelationshipSerializer, UserRelationship
 
@@ -49,54 +50,34 @@ class UserRegistrationView(generics.CreateAPIView):
 
 class UserLoginView(KnoxLoginView):
     serializer_class = UserLoginSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.AllowAny]
 
-    def validate(self, attrs):
-        username = attrs.get("username")
-        password = attrs.get("password")
-        user = User.objects.filter(
-            models.Q(username=username)
-        ).first()
-        if user:
-            if not user.check_password(password):
-                message = "Incorrect Password..."
-                raise serializers.ValidationError(message, code="authorization")
-        else:
-            message = "Unable to authenticate with provided credentials."
-            raise serializers.ValidationError(message, code="authorization")
-        token, _ = AuthToken.objects.create(user=user)
-        attrs["user"] = user
-        attrs["token"] = token
-        response_data = {
-            "user": {
-                "id": user.id,
-                "username": user.username,
-                "phone_number": user.phone_number,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "email": user.email,
-            },
-            "token": token.key
-        }
-        return response_data
-
     def post(self, request, format=None):
+        #serializer = self.serializer_class(data=request.data)
         serializer = AuthTokenSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data["user"]
-        login(request, user)
-        token, _ = AuthToken.objects.create(user=user)
-        response_data = {
-            "user": {
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.validated_data["user"]
+            #token, _ = AuthToken.objects.create(user)
+            login(request, user)
+            user_data = {
                 "id": user.id,
+                "user": user,
                 "username": user.username,
                 "phone_number": user.phone_number,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "email": user.email,
-            },
-        }
-        return response.Response(response_data)
+            }
+            return response.Response({
+                #"token":token,
+                "user": user_data
+            }, status=status.HTTP_200_OK)
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+        #serializer = AuthTokenSerializer(data=request.data)
+        #serializer.is_valid(raise_exception=True)
+        #user = serializer.validated_data["user"]
+        #login(request, user)
+        #return super(UserLoginView, self).post(request, format=None)
 
 
 
