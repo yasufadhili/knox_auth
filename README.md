@@ -140,7 +140,7 @@ Before setting up your project, make sure you have a basic understanding of its 
      AUTH_USER_MODEL = 'users.User'  # Replace 'users' with your user app's name
      ```
 
-4. **Internationalization and Localization:**
+4. **Internationalisation and Localisation:**
    - Configure the use of [Django Countries](https://github.com/SmileyChris/django-countries) and localization in `settings.py`:
      ```python
      COUNTRIES_OVERRIDE = {
