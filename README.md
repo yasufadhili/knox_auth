@@ -218,7 +218,7 @@ The "Users" app provides the following API endpoints, accessible from the base p
         "email": "john.doe@example.com",
         "first_name": "John",
         "last_name": "Doe",
-    }
+        }
     }
 
 ```
@@ -255,7 +255,7 @@ The "Users" app provides the following API endpoints, accessible from the base p
         }
     }
 
-    ```
+```
 
 ### Retrieve User Profiles
 
