@@ -207,6 +207,55 @@ The "Users" app provides the following API endpoints, accessible from the base p
 - **Request Body**: JSON with user credentials (phone number/username/email and password).
 - **Response**: Returns an authentication token upon successful login.
 - **Permissions**: Open to all users.
+- **Example Response** :
+    ```JSON
+    {
+    "token": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6",
+    "user": {
+        "id": 1,
+        "username": "john_doe",
+        "phone_number": "+1234567890",
+        "email": "john.doe@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+    }
+    }
+
+```
+
+### Retrieve User
+
+- **Endpoint**: `/<user_id>/`
+- **HTTP Method**: GET
+- **Description**: Get a list of the register users.
+- **Request Body**: JSON with user (id/username/phone number/first_name/last_name/email ...).
+- **Response**: Returns a list of all users.
+- **Permissions**: Open to all users.
+- **Example Response**:
+    ```JSON
+    {
+    "id": 1,
+    "username": "john_doe",
+    "phone_number": "+1234567890",
+    "email": "john.doe@example.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "is_developer": false,
+    "is_moderator": false,
+    "date_joined": "2023-10-20T12:34:56Z",
+    "profile": {
+        "country": "UK",
+        "bio": "This is John's bio.",
+        "display_image": "https://example.com/profile-image.jpg",
+        "status": {
+        "status": "active"
+        },
+        "followers_count": 0,
+        "following_count": 0
+        }
+    }
+
+    ```
 
 ### Retrieve User Profiles
 
