@@ -208,7 +208,7 @@ The "Users" app provides the following API endpoints, accessible from the base p
 - **Response**: Returns an authentication token upon successful login.
 - **Permissions**: Open to all users.
 - **Example Response** :
-    ```JSON
+```json
     {
     "token": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6",
     "user": {
@@ -232,7 +232,7 @@ The "Users" app provides the following API endpoints, accessible from the base p
 - **Response**: Returns a list of all users.
 - **Permissions**: Open to all users.
 - **Example Response**:
-    ```JSON
+```json
     {
     "id": 1,
     "username": "john_doe",
