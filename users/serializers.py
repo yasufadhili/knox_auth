@@ -121,5 +121,31 @@ class UserLoginSerializer(AuthTokenSerializer):
 
 
 
+class UserRelationshipSerializer(serializers.ModelSerializer):
+    follower = UserSerializer(read_only=True)
+    following = UserSerializer(read_only=True)
+    class Meta:
+        model = UserRelationship
+        fields = ('follower', 'following')
+    def create(self, validated_data):
+        follower = self.context['request'].user
+        following = validated_data['following']
+        relationship = UserRelationship.objects.create(follower=follower, following=following)
+        return relationship
+
+
+
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('country', 'bio', 'display_image')
+    
+    def update(self, instance, validated_data):
+        instance.country = validated_data['country']
+        instance.bio = validated_data['bio']
+        instance.display_image = validated_data['display_image']
+        instance.save()
+        return instance
+
 
 
