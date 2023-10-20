@@ -105,10 +105,6 @@ Before setting up your project, make sure you have a basic understanding of its 
          'rest_framework',
          'knox',
          'django_countries',
-         'django_countries_plus',
-         'allauth',
-         'allauth.account',
-         'allauth.socialaccount',
      ]
      ```
 
@@ -141,7 +137,7 @@ Before setting up your project, make sure you have a basic understanding of its 
      ```
 
 4. **Internationalisation and Localisation:**
-   - Configure the use of [Django Countries](https://github.com/SmileyChris/django-countries) and localization in `settings.py`:
+   - Configure the use of [Django Countries](https://github.com/SmileyChris/django-countries) and localisation in `settings.py`:
      ```python
      COUNTRIES_OVERRIDE = {
          'UK': 'United Kingdom',
