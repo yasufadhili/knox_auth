@@ -22,14 +22,15 @@ class ProfileSerializer(CountryFieldMixin, serializers.ModelSerializer):
     status = ProfileStatusSerializer(read_only=False)
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ["country", "bio", "display_image", "status", "followers_count", "following_count"]
 
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=False)
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ["id", "username", "phone_number", "last_name", "first_name", "email", "is_developer", "is_moderator", "date_joined", "last_login", "profile"]
+        #fields = "__all__"
 
 
 class UserRelationshipSerializer(serializers.ModelSerializer):
