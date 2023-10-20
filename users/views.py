@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login
 
-from rest_framework import viewsets, permissions, generics
+from rest_framework import viewsets, permissions, generics, views
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from knox.views import LoginView as KnoxLoginView
@@ -17,6 +17,12 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     #permission_classes = [permissions.IsAdminUser]
+
+
+class UserView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = "username"
 
 
 class UserRegistrationView(generics.CreateAPIView):
