@@ -30,7 +30,7 @@ git clone https://github.com/Yasu-Fadhili/knox_auth.git
 
 2. Navigate to the project directory:
 ```bash
-cd yourproject
+cd knox_auth
 ```
 
 3. Install the required Python packages using pip:
