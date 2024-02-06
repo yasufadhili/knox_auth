@@ -1,6 +1,6 @@
-# Project Documentation: Knox Auth
+# Project Documentation: Django Knox Authentication
 
-Project To handle users in a Django API
+Project to handle users in a Django API
 
 ## Overview - The users App
 
@@ -48,11 +48,11 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-Your "Users" app is now installed and ready to use.
+The "Users" app is now installed and ready to use.
 
 ## Project Structure
 
-Before setting up your project, make sure you have a basic understanding of its structure. The structure typically includes directories and files such as:
+Before setting up the project, make sure you have a basic understanding of its structure. The structure typically includes directories and files such as:
 
 - `manage.py` - The Django management script.
 - `yourproject/` - The main project directory.
