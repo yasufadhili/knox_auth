@@ -302,7 +302,7 @@ This documentation provides an overview of the "Users" app, its functionality, a
 
 The "Users" app is a tool for user management and social interactions within your application. Feel free to explore and customise the app to suit your project's specific requirements.
 
-This documentation serves as a reference guide for working with the "Users" app and its endpoints. If you have any questions or need further assistance, please refer to the project's [Readme.MD](https://github.com/Yasu-Fadhili/knox_auth/blob/master/README.md) File or reach out to me - [Yasu Fadhili](https://github.com/Yasu-Fadhili).
+This documentation serves as a reference guide for working with the "Users" app and its endpoints. If you have any questions or need further assistance, please refer to the project's [Readme.MD](https://github.com/yasufadhili/knox_auth/blob/master/README.md) File or reach out to me - [Yasu Fadhili](https://github.com/yasufadhili).
 
 Happy coding!
 
